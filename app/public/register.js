@@ -1,7 +1,7 @@
 document.getElementById("register-form").addEventListener("submit", async (e)=>{
     e.preventDefault();
 console.log(e.target.children.user.value);
-const res = await fetch("http://localhost:4000/register", {
+const res = await fetch("http://localhost:4000/api/register", {
     method: "POST",
     headers: {
         "Content-Type": "application/json"
