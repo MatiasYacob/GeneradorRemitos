@@ -37,7 +37,7 @@ const newUser = {
 }
 usuarios.push(newUser);
 console.log(usuarios);
-return res.status(201).json({status:"success", message: "User created successfully"});
+return res.status(201).json({status:"success", message: "User created successfully", redirect: "/"});
 
 };
 
