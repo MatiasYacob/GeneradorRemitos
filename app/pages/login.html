@@ -11,15 +11,17 @@
       <main >
             <div class="form-container">
                 <h1>Iniciar Sesion</h1>
-                <p>Ingresa Tus Credenciales para Administrar</p>
+              
                 <form id="login-form">
-                    <label for="user">User</label>
+                    <label for="user"></label>
                     <input type="text" name="user" id="user" placeholder="Nombre de Usuario" required>
                     <label for="password" class="sr-only">Password</label>
                     <input type="password" name="password" id="password" placeholder="Contraseña" required>
                     <button type="submit">Iniciar Sesion</button>
                     <p>¿No tienes cuenta? <a href="register">Registrate</a></p>    
                     <p>¿Olvidaste tu contraseña? <a href="forgot-password.html">Recuperar</a></p>
+                    <p class="error hide">Error al Iniciar Sesion</p>
+
                 </form>
             </div>
     </main>
