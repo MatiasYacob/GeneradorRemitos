@@ -10,6 +10,8 @@ const usuarios = [{
     password: "$2b$05$DFoYSonr4oayhf.qFEajouelKD9ULcNAUuW5r0JAdxNaak2AbTSNe"
 }];
 
+//Login function
+
 async function login(req, res) {
     console.log(req.body);
 
@@ -37,7 +39,7 @@ async function login(req, res) {
     const cookieOption = {
         expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRATION * 24 * 60 * 60 * 1000),
         path: "/",
-        httpOnly: true, // recomendación de seguridad
+        httpOnly: false, // recomendación de seguridad
         sameSite: "lax"
     };
 
@@ -49,6 +51,8 @@ async function login(req, res) {
         redirect: "/admin"
     });
 }
+
+//Register function
 
 async function register(req, res) {
     console.log(req.body);
@@ -81,6 +85,8 @@ async function register(req, res) {
         redirect: "/"
     });
 }
+
+//Logout function
 
 async function logout(req, res) {
     res.clearCookie("jwt");
