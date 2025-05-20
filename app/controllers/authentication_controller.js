@@ -4,11 +4,20 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const usuarios = [{
+export const usuarios = [{
     user: "admin",
+    role: "admin",
     email: "admin",
     password: "$2b$05$DFoYSonr4oayhf.qFEajouelKD9ULcNAUuW5r0JAdxNaak2AbTSNe"
-}];
+},{
+    user: "admin2",
+    role: "normal",
+    email: "admin",
+    password: "$2b$05$DFoYSonr4oayhf.qFEajouelKD9ULcNAUuW5r0JAdxNaak2AbTSNe"
+}
+
+
+];
 
 //Login function
 
