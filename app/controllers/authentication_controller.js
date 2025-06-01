@@ -1,99 +1,95 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import  pool  from "../database.js";
 
 dotenv.config();
 
-export const usuarios = [{
-    user: "admin",
-    role: "admin",
-    email: "admin",
-    password: "$2b$05$DFoYSonr4oayhf.qFEajouelKD9ULcNAUuW5r0JAdxNaak2AbTSNe"
-},{
-    user: "admin2",
-    role: "normal",
-    email: "admin",
-    password: "$2b$05$DFoYSonr4oayhf.qFEajouelKD9ULcNAUuW5r0JAdxNaak2AbTSNe"
-}
-
-
-];
 
 //Login function
 
 async function login(req, res) {
-    console.log(req.body);
-
     const { user, password } = req.body;
+
     if (!user || !password) {
-        return res.status(400).json({ status: "error", message: "All fields are required" });
+        return res.status(400).json({ status: "error", message: "Todos los campos son obligatorios" });
     }
 
-    const userExists = usuarios.find((u) => u.user === user);
-    if (!userExists) {
-        return res.status(400).json({ status: "error", message: "User or password incorrect" });
+    try {
+        const [rows] = await pool.query("SELECT * FROM users WHERE name = ?", [user]);
+
+        if (rows.length === 0) {
+            return res.status(400).json({ status: "error", message: "Usuario o contraseña incorrectos" });
+        }
+
+        const userFromDB = rows[0];
+
+        const passwordMatch = await bcrypt.compare(password, userFromDB.password);
+        if (!passwordMatch) {
+            return res.status(400).json({ status: "error", message: "Usuario o contraseña incorrectos" });
+        }
+
+        const token = jwt.sign(
+            {
+                id: userFromDB.id,
+                name: userFromDB.name,
+                isadmin: !!userFromDB.is_admin
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.JWT_EXPIRATION }
+        );
+
+        const cookieOption = {
+            expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRATION * 24 * 60 * 60 * 1000),
+            path: "/",
+            httpOnly: true,
+            sameSite: "lax"
+        };
+
+        res.cookie("jwt", token, cookieOption);
+
+        res.send({
+            status: "success",
+            message: "Login exitoso",
+            redirect: userFromDB.is_admin ? "/admin" : "/"
+        });
+
+    } catch (error) {
+        console.error("Error al hacer login:", error);
+        res.status(500).json({ status: "error", message: "Error interno del servidor" });
     }
-
-    const passwordMatch = await bcrypt.compare(password, userExists.password);
-    if (!passwordMatch) {
-        return res.status(400).json({ status: "error", message: "User or password incorrect" });
-    }
-
-    const token = jwt.sign(
-        { user: userExists.user },
-        process.env.JWT_SECRET,
-        { expiresIn: process.env.JWT_EXPIRATION }
-    );
-
-    const cookieOption = {
-        expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRATION * 24 * 60 * 60 * 1000),
-        path: "/",
-        httpOnly: false, // recomendación de seguridad
-        sameSite: "lax"
-    };
-
-    res.cookie("jwt", token, cookieOption);
-
-    res.send({
-        status: "success",
-        message: "Login success",
-        redirect: "/admin"
-    });
 }
 
 //Register function
 
 async function register(req, res) {
-    console.log(req.body);
     const { user, email, password } = req.body;
 
     if (!user || !email || !password) {
         return res.status(400).json({ status: "error", message: "All fields are required" });
     }
 
-    const userExists = usuarios.find((u) => u.user === user);
-    if (userExists) {
+    const [existing] = await pool.query("SELECT * FROM users WHERE name = ?", [user]);
+    if (existing.length > 0) {
         return res.status(400).json({ status: "error", message: "User already exists" });
     }
 
     const salt = await bcrypt.genSalt(5);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser = {
-        user,
-        email,
-        password: hashedPassword
-    };
-
-    usuarios.push(newUser);
-    console.log(usuarios);
+    await pool.query(
+        "INSERT INTO users (name, email, password, is_admin) VALUES (?, ?, ?, ?)",
+        [user, email, hashedPassword, false]
+    );
 
     return res.status(201).json({
         status: "success",
         message: "User created successfully",
         redirect: "/"
     });
+
 }
+
 
 //Logout function
 

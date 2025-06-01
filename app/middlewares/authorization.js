@@ -1,23 +1,25 @@
 import jsonwebtoken from "jsonwebtoken";
 import dotenv from "dotenv";
-import { usuarios } from "../controllers/authentication_controller.js";
+
 dotenv.config();
 
 function getRole(req) {
-  const cookieJWT = req.headers.cookie.split("=")[1];
-  const cookieDecodificada = jsonwebtoken.verify(
-    cookieJWT,
-    process.env.JWT_SECRET
-  );
+  try {
+    const token = req.cookies?.jwt; // suponiendo que usas cookie-parser
+    if (!token) return false;
 
-  console.log("cookie decodificada", cookieDecodificada);
-  const userExists = usuarios.find((u) => u.user === cookieDecodificada.user);
-  console.log("userExists role: ", userExists.role);
-  
-  if (!userExists) {
+    const decoded = jsonwebtoken.verify(token, process.env.JWT_SECRET);
+
+    // Aquí usas directamente isadmin del token
+    if (typeof decoded.isadmin === "boolean") {
+      return decoded.isadmin ? "admin" : "user";
+    }
+
+    return false;
+  } catch (error) {
+    console.error("Error validando token:", error);
     return false;
   }
-  return userExists.role;
 }
 
 function AdminAuthorization(req, res, next) {
@@ -25,9 +27,7 @@ function AdminAuthorization(req, res, next) {
   if (role === "admin") {
     return next();
   } else {
-    return res
-      .status(403)
-      .json({ status: "error", message: "Quien te conoce papa?" });
+    return res.status(403).json({ status: "error", message: "Quien te conoce papa?" });
   }
 }
 
@@ -38,5 +38,4 @@ function PublicAuthorization(req, res, next) {
 export const methods = {
   AdminAuthorization,
   PublicAuthorization,
-  // Other methods can be added here
 };
