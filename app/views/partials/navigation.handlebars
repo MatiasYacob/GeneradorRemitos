@@ -1,0 +1,96 @@
+<nav class="navbar">
+  <div class="navbar-container">
+    <a class="navbar-brand" href="#">Distribuidora Del Sol</a>
+    <button class="navbar-toggle" id="toggle-button">
+      ☰
+    </button>
+    <ul class="navbar-menu" id="navbar-menu">
+      <li><a class="nav-link active" href="#">Inicio</a></li>
+      <li><a class="nav-link" href="#">Clientes</a></li>
+      <li><a class="nav-link" href="#">Catalogo</a></li>
+       <li><a class="nav-link" href="/register">Registro</a></li>
+      
+    </ul>
+  </div>
+</nav>
+<script>
+  document.getElementById('toggle-button').addEventListener('click', () => {
+    document.getElementById('navbar-menu').classList.toggle('show');
+  });
+</script>
+<style>
+    .navbar {
+  background-color: #f8f9fa;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 960px;
+  margin: auto;
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  text-decoration: none;
+}
+
+.navbar-toggle {
+  display: none;
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color:#333;
+  }
+.navbar-menu {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #007bff;
+}
+
+.disabled {
+  color: #aaa;
+  pointer-events: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .navbar-toggle {
+    display: block;
+  }
+
+  .navbar-menu {
+    display: none;
+    flex-direction: column;
+    margin-top: 1rem;
+    gap: 0.5rem;
+  }
+
+  .navbar-menu.show {
+    display: flex;
+  }
+}
+
+</style>

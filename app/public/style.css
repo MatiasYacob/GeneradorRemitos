@@ -11,17 +11,27 @@ html {
   background-size: var(--s) calc(var(--s)*tan(30deg));
 }
 
-body{
+
+body {
     margin: 0;
     padding: 0;
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif ;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: large;
+    min-height: 100svh;
+}
+
+.centered-content {
+    min-height: calc(100svh - 56px); /* restás el alto del navbar si es fixed */
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100svh;
-    font-size: large;
-
+    flex-direction: column; /* si tenés varias cosas */
+    padding: 1rem;
 }
+
+
+
+
 .form-container{
     width: 500px;
     background-color: white;

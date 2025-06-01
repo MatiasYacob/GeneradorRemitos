@@ -3,6 +3,9 @@ import express from 'express';
 import exphbs from 'express-handlebars'; // motor de vistas
 import cookieParser from 'cookie-parser'; // para manejar cookies
 
+//import routes
+import personasRoutes from './routes/persona.routes.js';
+
 // Import methods
 import { methods as authController } from './controllers/authentication_controller.js';
 import { methods as authMiddleware } from './middlewares/authorization.js';
@@ -34,6 +37,9 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Rutas
+
+
+
 //Render del Login
 app.get('/', authMiddleware.PublicAuthorization, (req, res) => {
     res.render('login', {
@@ -41,7 +47,7 @@ app.get('/', authMiddleware.PublicAuthorization, (req, res) => {
         script: '/login.js'
     });
 });
-
+app.use(personasRoutes)
 //Render del Registro
 app.get('/register', (req, res) => {
     res.render('register', {
